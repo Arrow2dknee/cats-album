@@ -22,6 +22,9 @@ export class Cat {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, default: null, ref: 'User' })
   owner: User;
+
+  @Prop({ type: Boolean, default: false })
+  isDeleted: boolean;
 }
 
 export type CatDocument = HydratedDocument<Cat>;

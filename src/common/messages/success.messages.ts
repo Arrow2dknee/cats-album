@@ -3,4 +3,7 @@ export const SUCCESS = {
     REGISTRATION_SUCCESS: 'User has been registered successfully',
     LOGIN_SUCCESS: 'User logged-in successfully',
   },
+  CATS: {
+    REMOVED: 'Cat image removed successfully',
+  },
 };

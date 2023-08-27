@@ -18,5 +18,7 @@ export const ERROR = {
   },
   CATS: {
     IMAGE_REQUIRED: 'Image is required for upload',
+    NOT_FOUND: 'Cat image does not exists',
+    FILENAME_EXISTS: 'Filename already exists',
   },
 };

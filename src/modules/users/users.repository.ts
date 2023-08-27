@@ -51,7 +51,12 @@ export class UsersRepository {
   }
 
   async getActiveUsers(limit: number, skip: number): Promise<UserDocument[]> {
-    return this.userModel.find().limit(limit).skip(skip).exec();
+    return this.userModel
+      .find()
+      .limit(limit)
+      .skip(skip)
+      .sort({ updatedAt: -1 })
+      .exec();
   }
 
   async getActiveUsersCount(): Promise<number> {
