@@ -17,6 +17,9 @@ export class Cat {
   @Prop({ type: Buffer, required: true })
   metadata: Buffer;
 
+  @Prop({ type: Number, required: true })
+  fileSize: number;
+
   @Prop({ type: MongooseSchema.Types.ObjectId, default: null, ref: 'User' })
   owner: User;
 }

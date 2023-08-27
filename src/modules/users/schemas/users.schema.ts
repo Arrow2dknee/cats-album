@@ -14,7 +14,7 @@ export class User {
   @Prop({ type: String, required: true })
   email: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, select: false }) // will be excluded during .find() queries
   password: string;
 
   @Prop({ type: String, enum: UserRole, default: UserRole.user })

@@ -20,6 +20,8 @@
     "paths": {
       "@modules/*": ["src/modules/*"],
       "@messages/*": ["src/common/messages/*"],
+      "@dto/*": ["src/common/dto/*"],
+      "@common/*": ["src/common/*"],
     }
   }
 }
