@@ -23,8 +23,8 @@ export class UsersService {
     return this.usersRepository.findUserForVerification(email);
   }
 
-  async createUser(dto: RegisterDto): Promise<void> {
-    await this.usersRepository.addUser(dto);
+  async createUser(dto: RegisterDto): Promise<UserDocument> {
+    return this.usersRepository.addUser(dto);
   }
 
   async getUsers(queryDto: PaginationDto): Promise<IActiveUsers> {

@@ -9,6 +9,7 @@ import {
   Get,
   Param,
   Query,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -18,12 +19,12 @@ import { User } from '@common/decorators/user.decorator';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { Roles } from '@common/decorators/roles.decorator';
 import { UserRole } from '@modules/users/enums/user.role';
-import { UserDocument } from '@modules/users/schemas/users.schema';
 import { PaginationDto } from '@dto/pagination.dto';
+import { IUserInfo } from '@modules/users/interfaces';
 
 import { CatsService } from './cats.service';
 import { ICatImage, ICatImages } from './interfaces';
-import { CatImageIdDto } from './dto';
+import { CatImageFileNameDto, CatImageIdDto } from './dto';
 
 @Controller('cats')
 @UseGuards(AuthGuard, RolesGuard)
@@ -42,9 +43,9 @@ export class CatsController {
   )
   async uploadImage(
     @UploadedFile() file: Express.Multer.File,
-    @User() user: UserDocument,
+    @User() user: IUserInfo,
   ): Promise<ICatImage> {
-    return this.catsService.catImageUploader(file, user._id.toString());
+    return this.catsService.catImageUploader(file, user.id);
   }
 
   @Put('/:id')
@@ -60,35 +61,36 @@ export class CatsController {
   async updateImage(
     @Param() { id }: CatImageIdDto,
     @UploadedFile() file: Express.Multer.File,
-    @User() user: UserDocument,
+    @Body() bodyDto: CatImageFileNameDto,
+    @User() user: IUserInfo,
   ): Promise<ICatImage> {
-    return this.catsService.updateCatImage(id, file, user._id.toString());
+    return this.catsService.updateCatImage(id, file, user.id, bodyDto);
   }
 
   @Get('/:id')
   @Roles(UserRole.user)
   async getImageById(
     @Param() { id }: CatImageIdDto,
-    @User() user: UserDocument,
+    @User() user: IUserInfo,
   ): Promise<ICatImage> {
-    return this.catsService.getCatImage(id, user._id.toString());
+    return this.catsService.getCatImage(id, user.id);
   }
 
   @Get()
   @Roles(UserRole.user)
   async getAllImages(
     @Query() dto: PaginationDto,
-    @User() user: UserDocument,
+    @User() user: IUserInfo,
   ): Promise<ICatImages> {
-    return this.catsService.getCatImages(dto, user._id.toString());
+    return this.catsService.getCatImages(dto, user.id);
   }
 
   @Delete('/:id')
   @Roles(UserRole.user)
   async removeImage(
     @Param() { id }: CatImageIdDto,
-    @User() user: UserDocument,
+    @User() user: IUserInfo,
   ): Promise<string> {
-    return this.catsService.removeCatImage(id, user._id.toString());
+    return this.catsService.removeCatImage(id, user.id);
   }
 }

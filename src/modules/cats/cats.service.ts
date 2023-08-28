@@ -11,6 +11,7 @@ import { SUCCESS } from '@messages/success.messages';
 import { CatsRepository } from './cats.repository';
 import { IImageMetadata, ICatImage, ICatImages } from './interfaces';
 import { CatDocument } from './schemas/cats.schema';
+import { CatImageFileNameDto } from './dto';
 
 @Injectable()
 export class CatsService {
@@ -82,8 +83,11 @@ export class CatsService {
     id: string,
     file: Express.Multer.File,
     loggedInUser: string,
+    bodydto: CatImageFileNameDto,
   ): Promise<ICatImage> {
-    await this.validateCatImageId(id, loggedInUser);
+    let { fileName: newFileName } = bodydto;
+    const existingImage = await this.validateCatImageId(id, loggedInUser);
+    let catImage = null;
     const newCatImage: IImageMetadata = {
       fileName: null,
       mimeType: null,
@@ -92,7 +96,7 @@ export class CatsService {
       owner: null,
     };
 
-    if (file) {
+    if (file && !newFileName) {
       await this.validateImageFileName(file.originalname, loggedInUser);
       Object.assign(newCatImage, {
         fileName: file.originalname,
@@ -101,11 +105,34 @@ export class CatsService {
         fileSize: file.size, // in bytes
         owner: loggedInUser,
       });
+      catImage = await this.catsRepository.updateCatImage(id, newCatImage);
+    } else if (!file && newFileName) {
+      newFileName = newFileName.trim().replaceAll(' ', '');
+      await this.validateImageFileName(newFileName, loggedInUser);
+
+      Object.assign(newCatImage, {
+        fileName: newFileName,
+        mimeType: existingImage.mimeType,
+        metadata: existingImage.metadata,
+        fileSize: existingImage.fileSize,
+        owner: loggedInUser,
+      });
+      catImage = await this.catsRepository.updateCatImage(id, newCatImage);
+    } else if (file && newFileName) {
+      newFileName = newFileName.trim().replaceAll(' ', '');
+      await this.validateImageFileName(newFileName, loggedInUser);
+
+      Object.assign(newCatImage, {
+        fileName: newFileName,
+        mimeType: file.mimetype,
+        metadata: file.buffer,
+        fileSize: file.size,
+        owner: loggedInUser,
+      });
+      catImage = await this.catsRepository.updateCatImage(id, newCatImage);
+    } else if (!file && !newFileName) {
+      throw new BadRequestException(ERROR.CATS.MISSING_INFO);
     }
-    const catImage: CatDocument = await this.catsRepository.updateCatImage(
-      id,
-      newCatImage,
-    );
 
     return {
       id: catImage._id.toString(),

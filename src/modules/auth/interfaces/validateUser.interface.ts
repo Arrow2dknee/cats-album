@@ -1,8 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
 
-import { UserDocument } from '@modules/users/schemas/users.schema';
+import { IUserInfo } from '@modules/users/interfaces';
 
 export interface IValidateUser {
-  user: UserDocument;
+  user: IUserInfo;
   status: HttpStatus;
 }

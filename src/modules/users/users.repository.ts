@@ -44,8 +44,8 @@ export class UsersRepository {
       .lean();
   }
 
-  async addUser(dto: RegisterDto): Promise<void> {
-    await this.userModel.create({
+  async addUser(dto: RegisterDto): Promise<UserDocument> {
+    return this.userModel.create({
       ...dto,
     });
   }

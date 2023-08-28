@@ -42,9 +42,10 @@ export class AuthService {
       password: this.jwtService.encodePassword(password),
       role,
     };
-    await this.usersService.createUser(payload);
+    const newUser = await this.usersService.createUser(payload);
 
     return {
+      id: newUser._id.toString(),
       fullname: payload.fullname,
       email: payload.email,
       role: payload.role,
@@ -99,7 +100,12 @@ export class AuthService {
     }
 
     return {
-      user,
+      user: {
+        id: user._id.toString(),
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
+      },
       status: HttpStatus.OK,
     };
   }
